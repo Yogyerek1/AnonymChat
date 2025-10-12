@@ -1,5 +1,6 @@
 
 Create and activate a virtual environment:
+- cd apps-api
 - python3 -m venv venv
 - source venv/bin/activate
 
