@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:anonym_chat/theme/app_colors.dart';
+import 'host_page.dart';
+import 'join_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -43,7 +45,12 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 40),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HostPage()),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.blueBtn,
                 foregroundColor: AppColors.btnText,
@@ -66,7 +73,12 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const JoinPage()),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.greenBtn,
                 foregroundColor: AppColors.btnText,
