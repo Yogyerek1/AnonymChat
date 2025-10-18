@@ -6,7 +6,7 @@ class Database:
         self.link = link
         self.client = None
         self.db = None
-        self.chats = None
+        self.rooms = None
     def connect(self):
         try:
             self.client = MongoClient(self.link)
@@ -14,12 +14,12 @@ class Database:
             print("✅ MongoDB succesfully connected!")
 
             self.db = self.client["anonym_chat"]
-            self.chats = self.db["chats"]
+            self.rooms = self.db["rooms"]
         except ConnectionFailure:
             print("❌ MongoDB failed to connect.")
             self.client = None
             self.db = None
-            self.chats = None
+            self.rooms = None
 
 
 
