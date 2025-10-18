@@ -7,7 +7,7 @@ class AppColors {
   static const Color blueBtn = Color(0xFF00d4ff);
   static const Color greenBtn = Color(0xFF2ecc71);
 
-  static const Color messageSelf = Color(0xFF00d4ff);
+  static const Color messageSelf = Color.fromARGB(151, 0, 213, 255);
   static const Color messageOther = Color(0xFF3a4558);
 
   static const Color primaryText = Color(0xFFe0e0e0);

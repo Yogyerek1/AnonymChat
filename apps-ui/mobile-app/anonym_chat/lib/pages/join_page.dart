@@ -9,13 +9,13 @@ class JoinPage extends StatefulWidget {
 }
 
 class _JoinPageState extends State<JoinPage> {
-  final TextEditingController _chatNameController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _chatCodeController = TextEditingController();
   final TextEditingController _chatPasswordController = TextEditingController();
 
   @override
   void dispose() {
-    _chatNameController.dispose();
+    _userNameController.dispose();
     _chatCodeController.dispose();
     _chatPasswordController.dispose();
     super.dispose();
@@ -32,11 +32,11 @@ class _JoinPageState extends State<JoinPage> {
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.bold,
-            color: AppColors.title,
+            color: AppColors.greenBtn,
           ),
         ),
         backgroundColor: AppColors.appBar,
-        foregroundColor: AppColors.title,
+        foregroundColor: AppColors.greenBtn,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -46,11 +46,11 @@ class _JoinPageState extends State<JoinPage> {
           children: [
             SizedBox(height: 70),
             TextField(
-              controller: _chatCodeController,
+              controller: _userNameController,
               style: TextStyle(color: AppColors.secondaryText),
               decoration: InputDecoration(
-                labelText: 'Chat Kód',
-                hintText: 'Kód...',
+                labelText: 'Neved',
+                hintText: 'Név...',
                 hintStyle: TextStyle(
                   color: AppColors.secondaryText.withOpacity(0.5),
                 ),
@@ -72,11 +72,11 @@ class _JoinPageState extends State<JoinPage> {
             ),
             SizedBox(height: 30),
             TextField(
-              controller: _chatNameController,
+              controller: _chatCodeController,
               style: TextStyle(color: AppColors.secondaryText),
               decoration: InputDecoration(
-                labelText: 'Chat Neve',
-                hintText: 'Név...',
+                labelText: 'Chat Kód',
+                hintText: 'Kód...',
                 hintStyle: TextStyle(
                   color: AppColors.secondaryText.withOpacity(0.5),
                 ),
@@ -127,7 +127,7 @@ class _JoinPageState extends State<JoinPage> {
             ElevatedButton(
               onPressed: () {
                 String code = _chatCodeController.text;
-                String name = _chatNameController.text;
+                String name = _userNameController.text;
                 String password = _chatPasswordController.text;
                 print('Kód: $code, Név: $name, Jelszó: $password');
                 // TODO: API hívás

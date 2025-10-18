@@ -11,11 +11,13 @@ class HostPage extends StatefulWidget {
 class _HostPageState extends State<HostPage> {
   TextEditingController _chatNameController = TextEditingController();
   TextEditingController _chatPasswordController = TextEditingController();
+  TextEditingController _userNameController = TextEditingController();
 
   @override
   void dispose() {
     _chatNameController.dispose();
     _chatPasswordController.dispose();
+    _userNameController.dispose();
     super.dispose();
   }
 
@@ -42,7 +44,33 @@ class _HostPageState extends State<HostPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(height: 100),
+            SizedBox(height: 70),
+            TextField(
+              controller: _userNameController,
+              style: TextStyle(color: AppColors.secondaryText),
+              decoration: InputDecoration(
+                labelText: 'Neved',
+                hintText: 'Név...',
+                hintStyle: TextStyle(
+                  color: AppColors.secondaryText.withOpacity(0.5),
+                ),
+                labelStyle: TextStyle(color: AppColors.secondaryText),
+                filled: true,
+                fillColor: AppColors.background,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: AppColors.secondaryText,
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: AppColors.blueBtn, width: 2),
+                ),
+              ),
+            ),
+            SizedBox(height: 30),
             TextField(
               controller: _chatNameController,
               style: TextStyle(color: AppColors.secondaryText),
