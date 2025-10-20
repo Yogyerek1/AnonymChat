@@ -12,9 +12,24 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final List<Message> messages = [
-    Message(1, 'Szia!', false, DateTime.now()),
-    Message(2, 'Szia! Hogy vagy ma?', true, DateTime.now()),
-    Message(1, 'Jól vagyok!', false, DateTime.now()),
+    Message(
+      senderId: 1,
+      text: 'Szia!',
+      isMyMessage: false,
+      timestamp: DateTime.now(),
+    ),
+    Message(
+      senderId: 2,
+      text: 'Szia! Hogy vagy?',
+      isMyMessage: true,
+      timestamp: DateTime.now(),
+    ),
+    Message(
+      senderId: 1,
+      text: 'Jól vagyok!',
+      isMyMessage: false,
+      timestamp: DateTime.now(),
+    ),
   ];
   final TextEditingController _textController = TextEditingController();
 
@@ -27,7 +42,14 @@ class _ChatPageState extends State<ChatPage> {
   void _sendMessage() {
     if (_textController.text.isNotEmpty) {
       setState(() {
-        messages.add(Message(2, _textController.text, true, DateTime.now()));
+        messages.add(
+          Message(
+            senderId: 2,
+            text: _textController.text,
+            isMyMessage: true,
+            timestamp: DateTime.now(),
+          ),
+        );
       });
       _textController.clear();
     }

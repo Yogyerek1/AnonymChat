@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:anonym_chat/models/chat.dart';
+import 'package:anonym_chat/pages/chat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:anonym_chat/theme/app_colors.dart';
 
@@ -129,7 +133,13 @@ class _JoinPageState extends State<JoinPage> {
                 String code = _chatCodeController.text;
                 String name = _userNameController.text;
                 String password = _chatPasswordController.text;
-                print('Kód: $code, Név: $name, Jelszó: $password');
+                if (int.parse(code) == defaultChat.id &&
+                    password == defaultChat.password) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatPage()),
+                  );
+                }
                 // TODO: API hívás
               },
               style: ElevatedButton.styleFrom(
