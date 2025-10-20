@@ -1,5 +1,9 @@
+import 'package:anonym_chat/models/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:anonym_chat/theme/app_colors.dart';
+import 'package:anonym_chat/services/chat_service.dart';
+import 'package:anonym_chat/models/user.dart';
+import 'package:anonym_chat/pages/chat_page.dart';
 
 class HostPage extends StatefulWidget {
   const HostPage({super.key});
@@ -126,9 +130,15 @@ class _HostPageState extends State<HostPage> {
             SizedBox(height: 60),
             ElevatedButton(
               onPressed: () {
-                String name = _chatNameController.text;
+                String chatName = _chatNameController.text;
                 String password = _chatPasswordController.text;
-                print('Chat neve: $name, Jelszó: $password');
+                String userName = _userNameController.text;
+
+                print('Chat neve: $chatName, Jelszó: $password, Felhasználó neve: $userName');
+
+                final chatService = ChatService();
+                final chat = chatService.createChat(chatName: chatName, password: password, userName: userName);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(chat: chat)));
                 // TODO: API hívás
               },
               style: ElevatedButton.styleFrom(

@@ -4,6 +4,7 @@ import 'package:anonym_chat/models/chat.dart';
 import 'package:anonym_chat/pages/chat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:anonym_chat/theme/app_colors.dart';
+import 'package:anonym_chat/services/chat_service.dart';
 
 class JoinPage extends StatefulWidget {
   const JoinPage({super.key});
@@ -133,12 +134,14 @@ class _JoinPageState extends State<JoinPage> {
                 String code = _chatCodeController.text;
                 String name = _userNameController.text;
                 String password = _chatPasswordController.text;
-                if (int.parse(code) == defaultChat.id &&
-                    password == defaultChat.password) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ChatPage()),
-                  );
+
+                final chatService = ChatService();
+                final chat = chatService.findChatById(int.parse(code));
+
+                if(chat != null && password == chat.password){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(chat: chat),),);
+                }else{
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Hibás kód vagy jelszó!')));
                 }
                 // TODO: API hívás
               },

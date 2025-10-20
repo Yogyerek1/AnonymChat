@@ -1,37 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:anonym_chat/theme/app_colors.dart';
+import 'package:flutter/services.dart';
 import '../models/message.dart';
 import '../widgets/message_item.dart';
+import 'package:anonym_chat/models/chat.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+  final Chat chat;
+  const ChatPage({super.key, required this.chat});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final List<Message> messages = [
-    Message(
-      senderId: 1,
-      text: 'Szia!',
-      isMyMessage: false,
-      timestamp: DateTime.now(),
-    ),
-    Message(
-      senderId: 2,
-      text: 'Szia! Hogy vagy?',
-      isMyMessage: true,
-      timestamp: DateTime.now(),
-    ),
-    Message(
-      senderId: 1,
-      text: 'Jól vagyok!',
-      isMyMessage: false,
-      timestamp: DateTime.now(),
-    ),
-  ];
+  late List<Message> messages = [];
   final TextEditingController _textController = TextEditingController();
+
+  @override
+  void initState(){
+    super.initState();
+    messages = widget.chat.messages ?? [];
+  }
 
   @override
   void dispose() {
@@ -44,7 +34,7 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         messages.add(
           Message(
-            senderId: 2,
+            senderId: widget.chat.owner.id,
             text: _textController.text,
             isMyMessage: true,
             timestamp: DateTime.now(),
@@ -61,9 +51,9 @@ class _ChatPageState extends State<ChatPage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
-          '**Chat_Name**', // TODO: IDE JON MAJD A CHAT NEVE AMIT BEIR LETREHOZASNAL
-          style: TextStyle(
+        title: Text(
+          widget.chat.name, // TODO: IDE JON MAJD A CHAT NEVE AMIT BEIR LETREHOZASNAL
+          style: const TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.bold,
             color: AppColors.title,
@@ -71,7 +61,10 @@ class _ChatPageState extends State<ChatPage> {
         ),
         backgroundColor: AppColors.appBar,
         foregroundColor: AppColors.title,
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.content_copy))],
+        actions: [IconButton(onPressed: () {
+          Clipboard.setData(ClipboardData(text: widget.chat.id.toString()),);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Chat kód másolva: ${widget.chat.id}')),);
+        }, icon: Icon(Icons.content_copy))],
       ),
       body: Column(
         children: [
