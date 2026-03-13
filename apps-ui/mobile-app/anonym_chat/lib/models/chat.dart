@@ -1,9 +1,8 @@
 import 'message.dart';
-import 'user.dart';
 
 class Chat {
-  final int id;
-  final User ownerName;
+  final String id;
+  final String ownerName;
   final String name;
   final String password;
   final List<Message>? messages;

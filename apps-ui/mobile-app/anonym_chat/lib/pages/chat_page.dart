@@ -63,7 +63,6 @@ class _ChatPageState extends State<ChatPage> {
         _messages = messages
             .map(
               (m) => Message(
-                senderId: 0,
                 text: m.text,
                 senderName: m.senderName,
                 isMyMessage: m.senderName == widget.senderName,

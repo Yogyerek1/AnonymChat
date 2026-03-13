@@ -1,8 +1,6 @@
-import 'package:anonym_chat/models/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:anonym_chat/theme/app_colors.dart';
 import 'package:anonym_chat/services/chat_service.dart';
-import 'package:anonym_chat/models/user.dart';
 import 'package:anonym_chat/pages/chat_page.dart';
 
 class HostPage extends StatefulWidget {
@@ -61,6 +59,7 @@ class _HostPageState extends State<HostPage> {
         ),
       );
     } catch (e) {
+      print('HIBA: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Hiba történt, próbáld újra!')),

@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:anonym_chat/models/chat.dart';
 import 'package:anonym_chat/models/message.dart';
-import 'package:anonym_chat/models/user.dart';
-import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 
 class ChatService {
@@ -70,7 +68,6 @@ class ChatService {
       return data
           .map(
             (m) => Message(
-              senderId: 0,
               text: m['content'],
               senderName: m['senderName'],
               isMyMessage: false,
