@@ -43,14 +43,14 @@ class _JoinPageState extends State<JoinPage> {
     setState(() => _isLoading = true);
 
     try {
-      final approved = await _chatService.joinChat(
+      final result = await _chatService.joinChat(
         code: code,
         password: password,
       );
 
       if (!mounted) return;
 
-      if (approved) {
+      if (result['approved'] == true) {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -58,6 +58,7 @@ class _JoinPageState extends State<JoinPage> {
               chatCode: code,
               chatPassword: password,
               senderName: name,
+              chatName: result['chatName'] ?? code,
             ),
           ),
         );

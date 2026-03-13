@@ -12,12 +12,14 @@ class ChatPage extends StatefulWidget {
   final String chatCode;
   final String chatPassword;
   final String senderName;
+  final String chatName;
 
   const ChatPage({
     super.key,
     required this.chatCode,
     required this.chatPassword,
     required this.senderName,
+    required this.chatName,
   });
 
   @override
@@ -117,7 +119,7 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          widget.chatCode,
+          widget.chatName,
           style: const TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.bold,

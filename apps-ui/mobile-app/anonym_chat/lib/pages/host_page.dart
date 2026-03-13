@@ -55,6 +55,7 @@ class _HostPageState extends State<HostPage> {
             chatCode: chat.id.toString(),
             chatPassword: chat.password,
             senderName: userName,
+            chatName: chatName,
           ),
         ),
       );

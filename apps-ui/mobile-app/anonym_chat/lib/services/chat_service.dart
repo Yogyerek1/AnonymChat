@@ -36,7 +36,7 @@ class ChatService {
     }
   }
 
-  Future<bool> joinChat({
+  Future<Map<String, dynamic>> joinChat({
     required String code,
     required String password,
   }) async {
@@ -48,9 +48,9 @@ class ChatService {
 
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      return data['approved'] == true;
+      return data;
     }
-    return false;
+    return {'approved': false, 'chatName': null};
   }
 
   Future<List<Message>> getMessages({
