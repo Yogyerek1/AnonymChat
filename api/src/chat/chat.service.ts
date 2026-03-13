@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { CreateChatDto } from './dto/createChat.dto';
 import * as bcrypt from 'bcrypt';
 import { JoinChatDto } from './dto/joinChat.dto';
+import { SendMessageDto } from './dto/sendMessage.dto';
 
 @Injectable()
 export class ChatService {
@@ -40,5 +41,23 @@ export class ChatService {
     const isMatch = await bcrypt.compare(dto.password, chat.password);
 
     return { approved: isMatch };
+  }
+
+  async sendMessage(chatId: string, dto: SendMessageDto) {
+    const chat = await this.chatRepository.findOne({ where: { id: chatId } });
+
+    if (!chat) {
+      throw new NotFoundException('Chat not found');
+    }
+
+    const message = this.messageRepository.create({
+      content: dto.content,
+      senderName: dto.senderName,
+      chat: chat,
+    });
+
+    await this.messageRepository.save(message);
+
+    return { content: dto.content, senderName: dto.senderName };
   }
 }
