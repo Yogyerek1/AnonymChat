@@ -1,8 +1,6 @@
-import 'package:anonym_chat/models/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:anonym_chat/theme/app_colors.dart';
 import 'package:anonym_chat/services/chat_service.dart';
-import 'package:anonym_chat/models/user.dart';
 import 'package:anonym_chat/pages/chat_page.dart';
 
 class HostPage extends StatefulWidget {
@@ -16,6 +14,8 @@ class _HostPageState extends State<HostPage> {
   TextEditingController _chatNameController = TextEditingController();
   TextEditingController _chatPasswordController = TextEditingController();
   TextEditingController _userNameController = TextEditingController();
+  final ChatService _chatService = ChatService();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -23,6 +23,51 @@ class _HostPageState extends State<HostPage> {
     _chatPasswordController.dispose();
     _userNameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleCreate() async {
+    final chatName = _chatNameController.text.trim();
+    final password = _chatPasswordController.text.trim();
+    final userName = _userNameController.text.trim();
+
+    if (chatName.isEmpty || password.isEmpty || userName.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Minden mezőt tölts ki')));
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final chat = await _chatService.createChat(
+        chatName: chatName,
+        password: password,
+        userName: userName,
+      );
+
+      if (!mounted) return;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatPage(
+            chatCode: chat.id.toString(),
+            chatPassword: chat.password,
+            senderName: userName,
+            chatName: chatName,
+          ),
+        ),
+      );
+    } catch (e) {
+      print('HIBA: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Hiba történt, próbáld újra!')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -129,18 +174,7 @@ class _HostPageState extends State<HostPage> {
             ),
             SizedBox(height: 60),
             ElevatedButton(
-              onPressed: () {
-                String chatName = _chatNameController.text;
-                String password = _chatPasswordController.text;
-                String userName = _userNameController.text;
-
-                print('Chat neve: $chatName, Jelszó: $password, Felhasználó neve: $userName');
-
-                final chatService = ChatService();
-                final chat = chatService.createChat(chatName: chatName, password: password, userName: userName);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(chat: chat)));
-                // TODO: API hívás
-              },
+              onPressed: _isLoading ? null : _handleCreate,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.blueBtn,
                 foregroundColor: AppColors.btnText,
@@ -149,17 +183,22 @@ class _HostPageState extends State<HostPage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.group_add, size: 24),
-                  SizedBox(width: 12),
-                  Text(
-                    'Létrehozás',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                  ),
-                ],
-              ),
+              child: _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.group_add, size: 24),
+                        SizedBox(width: 12),
+                        Text(
+                          'Létrehozás',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
             ),
           ],
         ),

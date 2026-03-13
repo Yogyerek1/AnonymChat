@@ -40,12 +40,12 @@ export class ChatService {
     const chat = await this.chatRepository.findOne({ where: { id: dto.code } });
 
     if (!chat) {
-      return { approved: false };
+      return { approved: false, chatName: null };
     }
 
     const isMatch = await bcrypt.compare(dto.password, chat.password);
 
-    return { approved: isMatch };
+    return { approved: isMatch, chatName: isMatch ? chat.name : null };
   }
 
   async sendMessage(dto: SendMessageDto) {
