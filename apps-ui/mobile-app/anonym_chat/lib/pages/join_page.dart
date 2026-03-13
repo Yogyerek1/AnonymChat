@@ -17,6 +17,8 @@ class _JoinPageState extends State<JoinPage> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _chatCodeController = TextEditingController();
   final TextEditingController _chatPasswordController = TextEditingController();
+  final ChatService _chatService = ChatService();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -24,6 +26,54 @@ class _JoinPageState extends State<JoinPage> {
     _chatCodeController.dispose();
     _chatPasswordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleJoin() async {
+    final code = _chatCodeController.text.trim();
+    final name = _userNameController.text.trim();
+    final password = _chatPasswordController.text.trim();
+
+    if (code.isEmpty || name.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Minden mezőt tölts ki!')));
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final approved = await _chatService.joinChat(
+        code: code,
+        password: password,
+      );
+
+      if (!mounted) return;
+
+      if (approved) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatPage(
+              chatCode: code,
+              chatPassword: password,
+              senderName: name,
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Hibás kód vagy jelszó!')));
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Hiba történt, próbáld újra!')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -130,28 +180,7 @@ class _JoinPageState extends State<JoinPage> {
             ),
             SizedBox(height: 60),
             ElevatedButton(
-              onPressed: () {
-                String code = _chatCodeController.text;
-                String name = _userNameController.text;
-                String password = _chatPasswordController.text;
-
-                final chatService = ChatService();
-                final chat = chatService.findChatById(int.parse(code));
-
-                if (chat != null && password == chat.password) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatPage(chat: chat),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Hibás kód vagy jelszó!')),
-                  );
-                }
-                // TODO: API hívás
-              },
+              onPressed: _isLoading ? null : _handleJoin,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.greenBtn,
                 foregroundColor: AppColors.btnText,
@@ -160,17 +189,22 @@ class _JoinPageState extends State<JoinPage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.group_add, size: 24),
-                  SizedBox(width: 12),
-                  Text(
-                    'Belépés',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                  ),
-                ],
-              ),
+              child: _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.group_add, size: 24),
+                        SizedBox(width: 12),
+                        Text(
+                          'Belépés',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
             ),
           ],
         ),
