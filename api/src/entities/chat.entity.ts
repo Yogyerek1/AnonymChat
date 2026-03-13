@@ -18,6 +18,9 @@ export class Chat {
   @Column()
   password: string;
 
+  @Column()
+  ownerName: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

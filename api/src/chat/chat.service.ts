@@ -10,4 +10,6 @@ export class ChatService {
     @InjectRepository(Chat) private chatRepository: Repository<Chat>,
     @InjectRepository(Message) private messageRepository: Repository<Message>,
   ) {}
+
+  async createChat() {}
 }
