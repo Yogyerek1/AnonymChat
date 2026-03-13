@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:anonym_chat/services/chat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:anonym_chat/theme/app_colors.dart';
 import 'package:flutter/services.dart';
@@ -6,43 +9,80 @@ import '../widgets/message_item.dart';
 import 'package:anonym_chat/models/chat.dart';
 
 class ChatPage extends StatefulWidget {
-  final Chat chat;
-  const ChatPage({super.key, required this.chat});
+  final String chatCode;
+  final String chatPassword;
+  final String senderName;
+
+  const ChatPage({
+    super.key,
+    required this.chatCode,
+    required this.chatPassword,
+    required this.senderName,
+  });
 
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
-  late List<Message> messages = [];
   final TextEditingController _textController = TextEditingController();
+  final ChatService _chatService = ChatService();
+  final ScrollController _scrollController = ScrollController();
+
+  List<Message> _messages = [];
+  Timer? _pollingTimer;
+  bool _isSending = false;
 
   @override
   void initState() {
     super.initState();
-    messages = widget.chat.messages ?? [];
+    _loadMessages();
+    _pollingTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      loadMessages();
+    });
   }
 
   @override
   void dispose() {
+    _pollingTimer?.cancel();
     _textController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
-  void _sendMessage() {
-    if (_textController.text.isNotEmpty) {
+  Future<void> _loadMessages() async {
+    try {
+      final messages = await _chatService.getMessages(
+        code: widget.chatCode,
+        password: widget.chatPassword,
+      );
+
+      if (!mounted) return;
+
       setState(() {
-        messages.add(
-          Message(
-            senderId: widget.chat.ownerName.id,
-            text: _textController.text,
-            isMyMessage: true,
-            timestamp: DateTime.now(),
-          ),
-        );
+        _messages = messages
+            .map(
+              (m) => Message(
+                senderId: 0,
+                text: m.text,
+                senderName: m.senderName,
+                isMyMessage: m.senderName == widget.senderName,
+                timestamp: m.timestamp,
+              ),
+            )
+            .toList();
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          }
+        });
       });
-      _textController.clear();
-    }
+    } catch (e) {}
   }
 
   @override
