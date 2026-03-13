@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from '../entities/chat.entity';
 import { Message } from '../entities/message.entity';
@@ -7,6 +11,7 @@ import { CreateChatDto } from './dto/createChat.dto';
 import * as bcrypt from 'bcrypt';
 import { JoinChatDto } from './dto/joinChat.dto';
 import { SendMessageDto } from './dto/sendMessage.dto';
+import { GetMessagesDto } from './dto/getMessages.dto';
 
 @Injectable()
 export class ChatService {
@@ -43,8 +48,8 @@ export class ChatService {
     return { approved: isMatch };
   }
 
-  async sendMessage(chatId: string, dto: SendMessageDto) {
-    const chat = await this.chatRepository.findOne({ where: { id: chatId } });
+  async sendMessage(dto: SendMessageDto) {
+    const chat = await this.chatRepository.findOne({ where: { id: dto.code } });
 
     if (!chat) {
       throw new NotFoundException('Chat not found');
@@ -59,5 +64,23 @@ export class ChatService {
     await this.messageRepository.save(message);
 
     return { content: dto.content, senderName: dto.senderName };
+  }
+
+  async getMessages(dto: GetMessagesDto) {
+    const chat = await this.chatRepository.findOne({ where: { id: dto.code } });
+
+    if (!chat) {
+      throw new NotFoundException('Chat not found');
+    }
+
+    const isMatch = await bcrypt.compare(dto.password, chat.password);
+    if (!isMatch) {
+      throw new UnauthorizedException('Wrong password');
+    }
+
+    return await this.messageRepository.find({
+      where: { chat: { id: dto.code } },
+      order: { createdAt: 'ASC' },
+    });
   }
 }

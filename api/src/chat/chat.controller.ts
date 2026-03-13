@@ -3,6 +3,7 @@ import { CreateChatDto } from './dto/createChat.dto';
 import { ChatService } from './chat.service';
 import { JoinChatDto } from './dto/joinChat.dto';
 import { SendMessageDto } from './dto/sendMessage.dto';
+import { GetMessagesDto } from './dto/getMessages.dto';
 
 @Controller('chats')
 export class ChatController {
@@ -18,8 +19,13 @@ export class ChatController {
     return this.chatService.joinChat(body);
   }
 
-  @Post(':id/message')
-  sendMessage(@Param('id') id: string, @Body() body: SendMessageDto) {
-    return this.chatService.sendMessage(id, body);
+  @Post('message')
+  sendMessage(@Body() body: SendMessageDto) {
+    return this.chatService.sendMessage(body);
+  }
+
+  @Post('messages')
+  getMessages(@Body() body: GetMessagesDto) {
+    return this.chatService.getMessages(body);
   }
 }
