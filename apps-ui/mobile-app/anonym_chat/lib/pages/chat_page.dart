@@ -38,7 +38,7 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     _loadMessages();
     _pollingTimer = Timer.periodic(const Duration(seconds: 3), (_) {
-      loadMessages();
+      _loadMessages();
     });
   }
 
@@ -85,6 +85,32 @@ class _ChatPageState extends State<ChatPage> {
     } catch (e) {}
   }
 
+  Future<void> _sendMessage() async {
+    if (_textController.text.trim().isEmpty || _isSending) return;
+
+    final content = _textController.text.trim();
+    _textController.clear();
+    setState(() => _isSending = true);
+
+    try {
+      await _chatService.sendMessage(
+        code: widget.chatCode,
+        password: widget.chatPassword,
+        content: content,
+        senderName: widget.senderName,
+      );
+
+      await _loadMessages();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Üzenet küldése sikertelen!')),
+      );
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,9 +118,7 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          widget
-              .chat
-              .name, // TODO: IDE JON MAJD A CHAT NEVE AMIT BEIR LETREHOZASNAL
+          widget.chatCode,
           style: const TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.bold,
@@ -106,9 +130,11 @@ class _ChatPageState extends State<ChatPage> {
         actions: [
           IconButton(
             onPressed: () {
-              Clipboard.setData(ClipboardData(text: widget.chat.id.toString()));
+              Clipboard.setData(
+                ClipboardData(text: widget.chatCode.toString()),
+              );
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Chat kód másolva: ${widget.chat.id}')),
+                SnackBar(content: Text('Chat kód másolva: ${widget.chatCode}')),
               );
             },
             icon: Icon(Icons.content_copy),
@@ -119,9 +145,10 @@ class _ChatPageState extends State<ChatPage> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: messages.length,
+              controller: _scrollController,
+              itemCount: _messages.length,
               itemBuilder: (context, index) {
-                return MessageItem(message: messages[index]);
+                return MessageItem(message: _messages[index]);
               },
             ),
           ),
@@ -155,8 +182,14 @@ class _ChatPageState extends State<ChatPage> {
                 ),
                 SizedBox(width: 8),
                 IconButton(
-                  onPressed: _sendMessage,
-                  icon: Icon(Icons.send),
+                  onPressed: _isSending ? null : _sendMessage,
+                  icon: _isSending
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Icon(Icons.send),
                   color: AppColors.title,
                 ),
               ],

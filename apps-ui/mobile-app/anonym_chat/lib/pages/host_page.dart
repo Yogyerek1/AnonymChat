@@ -53,7 +53,11 @@ class _HostPageState extends State<HostPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ChatPage(chat: chat, senderName: userName),
+          builder: (context) => ChatPage(
+            chatCode: chat.id.toString(),
+            chatPassword: chat.password,
+            senderName: userName,
+          ),
         ),
       );
     } catch (e) {
