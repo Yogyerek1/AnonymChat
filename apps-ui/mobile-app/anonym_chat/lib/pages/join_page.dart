@@ -138,10 +138,17 @@ class _JoinPageState extends State<JoinPage> {
                 final chatService = ChatService();
                 final chat = chatService.findChatById(int.parse(code));
 
-                if(chat != null && password == chat.password){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(chat: chat),),);
-                }else{
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Hibás kód vagy jelszó!')));
+                if (chat != null && password == chat.password) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatPage(chat: chat),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Hibás kód vagy jelszó!')),
+                  );
                 }
                 // TODO: API hívás
               },

@@ -18,7 +18,7 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _textController = TextEditingController();
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     messages = widget.chat.messages ?? [];
   }
@@ -34,7 +34,7 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         messages.add(
           Message(
-            senderId: widget.chat.owner.id,
+            senderId: widget.chat.ownerName.id,
             text: _textController.text,
             isMyMessage: true,
             timestamp: DateTime.now(),
@@ -52,7 +52,9 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          widget.chat.name, // TODO: IDE JON MAJD A CHAT NEVE AMIT BEIR LETREHOZASNAL
+          widget
+              .chat
+              .name, // TODO: IDE JON MAJD A CHAT NEVE AMIT BEIR LETREHOZASNAL
           style: const TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.bold,
@@ -61,10 +63,17 @@ class _ChatPageState extends State<ChatPage> {
         ),
         backgroundColor: AppColors.appBar,
         foregroundColor: AppColors.title,
-        actions: [IconButton(onPressed: () {
-          Clipboard.setData(ClipboardData(text: widget.chat.id.toString()),);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Chat kód másolva: ${widget.chat.id}')),);
-        }, icon: Icon(Icons.content_copy))],
+        actions: [
+          IconButton(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: widget.chat.id.toString()));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Chat kód másolva: ${widget.chat.id}')),
+              );
+            },
+            icon: Icon(Icons.content_copy),
+          ),
+        ],
       ),
       body: Column(
         children: [
