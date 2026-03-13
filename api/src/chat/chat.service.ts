@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from '../entities/chat.entity';
 import { Message } from '../entities/message.entity';
 import { Repository } from 'typeorm';
+import { CreateChatDto } from './dto/createChat.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ChatService {
@@ -11,5 +13,19 @@ export class ChatService {
     @InjectRepository(Message) private messageRepository: Repository<Message>,
   ) {}
 
-  async createChat() {}
+  async createChat(dto: CreateChatDto) {
+    const chat = this.chatRepository.create({
+      name: dto.name,
+      password: await bcrypt.hash(dto.password, 10),
+      ownerName: dto.ownerName,
+    });
+
+    const saved = await this.chatRepository.save(chat);
+
+    return {
+      id: saved.id,
+      name: saved.name,
+      ownerName: saved.ownerName,
+    };
+  }
 }
