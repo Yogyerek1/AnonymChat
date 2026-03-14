@@ -25,6 +25,11 @@ class MessageItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              message.senderName,
+              style: TextStyle(color: AppColors.secondaryText),
+            ),
+            SizedBox(height: 4),
             Text(message.text, style: TextStyle(color: AppColors.primaryText)),
             SizedBox(height: 4),
             Text(
