@@ -5,7 +5,7 @@ import 'package:anonym_chat/models/message.dart';
 import 'package:http/http.dart' as http;
 
 class ChatService {
-  final String baseUrl = 'https://anonymchatapi.zenithfactory.dev';
+  final String baseUrl = 'https://anonymchatapi.zenithfactory.dev/chats';
 
   Future<Chat> createChat({
     required String chatName,
